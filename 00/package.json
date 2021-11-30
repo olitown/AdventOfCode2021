@@ -6,7 +6,7 @@
     "typescript": "^2.7.2"
   },
   "scripts": {
-    "start": "node out/app.js",
+    "start": "node out/app1.js",
     "prestart": "npm run build",
     "build": "tsc"
   }
