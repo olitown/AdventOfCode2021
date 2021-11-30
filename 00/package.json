@@ -5,6 +5,7 @@
     "@types/node": "^16.11.11",
     "typescript": "^2.7.2"
   },
+  "author": {"Oliver Sturm"},
   "scripts": {
     "start": "node out/app1.js",
     "prestart": "npm run build",
