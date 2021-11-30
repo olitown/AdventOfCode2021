@@ -1,0 +1,13 @@
+{
+  "name": "advent-of-code-00",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/node": "^16.11.11",
+    "typescript": "^2.7.2"
+  },
+  "scripts": {
+    "start": "node out/app.js",
+    "prestart": "npm run build",
+    "build": "tsc"
+  }
+}
