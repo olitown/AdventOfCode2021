@@ -15,10 +15,10 @@ const convertToVentMap = () => {
     const ventStart = points[0].split(',');
     const ventEnd = points[1].split(',');
     const paths = {
-      startX: ventStart[0],
-      startY: ventStart[1],
-      endX: ventEnd[0],
-      endY: ventEnd[1]
+      startX: parseInt(ventStart[0]),
+      startY: parseInt(ventStart[1]),
+      endX: parseInt(ventEnd[0]),
+      endY: parseInt(ventEnd[1])
     };
     ventMap.push(paths);
   });
@@ -27,14 +27,15 @@ const convertToVentMap = () => {
 
 const reduceVentMap = (ventMap) => {
   ventMap = _.filter(ventMap, function (ventObj) {
-    return ventObj.startX == ventObj.endX || ventObj.startY == ventObj.endY ;
+    return ventObj.startX == ventObj.endX || ventObj.startY == ventObj.endY || 
+    (Math.abs(ventObj.startX-ventObj.endX) == Math.abs(ventObj.startY-ventObj.endY)) ;
   });
   return ventMap;
 };
 
 
 const countVents = (ventMap) => {
-  let ventCounterMap;
+  let ventCounterMap = [];
   const maxX = _.maxBy(ventMap, function (vent) {
     if (vent['startX'] >= vent['endX']) return vent['startX'];
     else return vent['endX'];
@@ -58,13 +59,23 @@ const countVents = (ventMap) => {
       range.forEach(function (yValue) {
         ventCounterMap[this.x][yValue]++;
       }, x);
-    } else {
+    } else if (vent['startY'] == vent['endY']) {
       //same Y
       const range = _.range(vent['startX'], vent['endX']);
       range.push(vent['endX']);
       const y = { y: parseInt(vent['startY']) };
       range.forEach(function (xValue) {
         ventCounterMap[xValue][this.y]++;
+      }, y);
+    }
+    else {
+      const rangeX = _.range(vent['startX'], vent['endX']);
+      rangeX.push(parseInt(vent['endX']));
+      const rangeY = _.range(vent['startY'], vent['endY']);
+      rangeY.push(parseInt(vent['endY']));
+      const y = { y: parseInt(vent['startY']) }
+      rangeX.forEach(function (xValue, index) {
+        ventCounterMap[xValue][rangeY[index]]++;
       }, y);
     }
   });
@@ -79,9 +90,9 @@ const calculateResult = (ventCounterMap) => {
   return ventCounterMap.length;
 };
 
-export const solution1 = () => {
+export const solution2 = () => {
   let ventMap = convertToVentMap();
-  ventMap = reduceVentMap(ventMap);
+ // ventMap = reduceVentMap(ventMap);
   const ventCounterMap = countVents(ventMap);
   const result = calculateResult(ventCounterMap);
   //const valueList: Array<number> = lines.map((line: string) => parseInt(line));

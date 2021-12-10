@@ -14,32 +14,45 @@ const solution = (inputText) => {
   let bingoHits = bingoInit(numberOfCards);
   let bingoNumber = 0;
   let winnerFound = false;
-  let winnerCard = null;
+  let winnerCard = numberOfCards+1;
   let resultCheck = null;
-  while (!winnerFound) {
+  let activeCards = _.range(0,numberOfCards);
+  let solutionFound = false;
+  while (!solutionFound) {
     bingoNumber = bingoNumbers.shift();
     bingoHits = bingoAddNum(bingoCards, bingoHits, bingoNumber, numberOfCards);
-    resultCheck = bingoCheck(bingoHits);
-    winnerFound = resultCheck.winnerFound;
-    winnerCard = resultCheck.winnerCard;
+    do {
+      resultCheck = bingoCheck(bingoHits, activeCards);
+      winnerFound = resultCheck.winnerFound;
+      winnerCard = resultCheck.winnerCard;
+      if ( winnerFound ){
+        if (activeCards.length > 1) {
+          _.remove(activeCards, function(n) {return n  === winnerCard;});
+        }
+        else {
+          solutionFound = true; 
+        }
+      }
+    } while (winnerFound && !solutionFound )
+    
   }
-  console.log('winnerCard:' + winnerCard);
-
+  winnerCard = activeCards[0];
+  console.log('winnerCard:' + activeCards[0]);
   return bingoWinnerCalc(bingoHits[winnerCard], bingoCards[winnerCard], bingoNumber)
 
-};
+}
 
 const bingoWinnerCalc = (bingoHits, bingoCard, bingoNumber) => {
   let result = 0;
-  for (let i=0; bingoHits.length; i++) {
+  for (let i=0; i<bingoHits.length; i++) {
     let hitColumn = bingoHits[i];
-    for (let j = 0; hitColumn.lenght; j++) {
-      if (bingoHits[i][j] == 1) {
+    for (let j = 0; j<hitColumn.length; j++) {
+      if (bingoHits[i][j] != 1) {
         result = result + parseInt(bingoCard[i][j]); 
       }
     }
   }
-  result = result * bingoNumber;
+  return (result * bingoNumber);
 }
 
 const bingoAddNum = (bingoCards, bingoHits, bingoNumber, numberOfCards) => {
@@ -65,12 +78,13 @@ const bingoInit = (numberOfCards) => {
   return bingoHits;
 };
 
-const bingoCheck = (bingoHits) => {
+const bingoCheck = (bingoHits, activeCards) => {
   let winnerFound = false;
   let winnerCard = null;
+  let i = 0;
+  let card = activeCards[0];
 
-  let card = 0;
-  while (!winnerFound && card < bingoHits.length) {
+  while (!winnerFound && i < activeCards.length ) {
     let line = 0;
     while (!winnerFound && line < bingoSize) {
       const lineHits = bingoHits[card][line];
@@ -88,7 +102,8 @@ const bingoCheck = (bingoHits) => {
     if (winnerFound) {
       winnerCard = card;
     }
-    card++;
+    i++;
+    card = activeCards[i];
   }
 
   return { winnerFound, winnerCard };
@@ -125,8 +140,9 @@ const splitCards = (inputText) => {
   return { bingoNumbers, bingoCards, numberOfCards };
 };
 
-export const solution1 = () => {
-  solution(inputText);
+
+export const solution2 = () => {
+// solution(inputText);
 
   return solution(inputText);
 };
